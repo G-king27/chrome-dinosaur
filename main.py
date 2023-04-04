@@ -13,6 +13,7 @@ RUNNING = [pygame.image.load(os.path.join("Assets/Dino", "DinoRun1.png")),
 JUMPING = pygame.image.load(os.path.join("Assets/Dino", "DinoJump.png"))
 DUCKING = [pygame.image.load(os.path.join("Assets/Dino", "DinoDuck1.png")),
            pygame.image.load(os.path.join("Assets/Dino", "DinoDuck2.png"))]
+STOPING = pygame.image.load(os.path.join("Assets/Dino", "DinoStart.png"))
 
 SMALL_CACTUS = [pygame.image.load(os.path.join("Assets/Cactus", "SmallCactus1.png")),
                 pygame.image.load(os.path.join("Assets/Cactus", "SmallCactus2.png")),
@@ -39,10 +40,12 @@ class Dinosaur:
         self.duck_img = DUCKING
         self.run_img = RUNNING
         self.jump_img = JUMPING
+        self.stop_img = STOPING
 
         self.dino_duck = False
         self.dino_run = True
         self.dino_jump = False
+        self.dino_stop = False
 
         self.step_index = 0
         self.jump_vel = self.JUMP_VEL
@@ -58,6 +61,8 @@ class Dinosaur:
             self.run()
         if self.dino_jump:
             self.jump()
+        if self.dino_stop:
+            self.stop()
 
         if self.step_index >= 10:
             self.step_index = 0
@@ -66,14 +71,22 @@ class Dinosaur:
             self.dino_duck = False
             self.dino_run = False
             self.dino_jump = True
+            self.dino_stop = False
         elif userInput[pygame.K_DOWN] and not self.dino_jump:
             self.dino_duck = True
             self.dino_run = False
             self.dino_jump = False
+            self.dino_stop = False
         elif not (self.dino_jump or userInput[pygame.K_DOWN]):
             self.dino_duck = False
             self.dino_run = True
             self.dino_jump = False
+            self.dino_stop = False
+        elif userInput[pygame.K_SPACE] and not self.dino_stop:
+            self.dino_duck = False
+            self.dino_run = False
+            self.dino_jump = False
+            self.dino_stop = True
 
     def duck(self):
         self.image = self.duck_img[self.step_index // 5]
@@ -97,6 +110,13 @@ class Dinosaur:
         if self.jump_vel < - self.JUMP_VEL:
             self.dino_jump = False
             self.jump_vel = self.JUMP_VEL
+
+    def stop(self):
+        self.image = self.stop_img[self.step_index // 5]
+        self.dino_rect = self.image.get_rect()
+        self.dino_rect.x = self.X_POS
+        self.dino_rect.y = self.Y_POS
+        self.step_index += 1
 
     def draw(self, SCREEN):
         SCREEN.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
