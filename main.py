@@ -241,7 +241,11 @@ def main():
             obstacle.draw(SCREEN)
             obstacle.update()
             if player.dino_rect.colliderect(obstacle.rect):
-                
+                pygame.time.delay(2000)
+                death_count += 1
+                menu(death_count)
+
+        background()
 
         cloud.draw(SCREEN)
         cloud.update()
